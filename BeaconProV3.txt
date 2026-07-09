@@ -1,0 +1,654 @@
+if _G.BEACONPRO_LOADED then return end
+_G.BEACONPRO_LOADED = true
+local EXPECTED_PLACE_ID = 142823291
+local MarketplaceService = game:GetService("MarketplaceService")
+local function GetGameName(placeId)
+    local success, info = pcall(function() return MarketplaceService:GetProductInfo(placeId) end)
+    if success and info and info.Name then return info.Name else return "Unknown Game" end
+end
+if game.PlaceId ~= EXPECTED_PLACE_ID then return end
+local coreGuisBefore = {}
+for _, v in pairs(game.CoreGui:GetChildren()) do coreGuisBefore[v] = true end
+local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/higuysdorobloxjoaopk-maker/BestScriptsLuay/refs/heads/main/windowsLyVersionUi/Lib/Libray(Lua.co).lua"))()
+local libraryGui = nil
+for _, v in pairs(game.CoreGui:GetChildren()) do
+    if not coreGuisBefore[v] then libraryGui = v break end
+end
+local UserInputService = game:GetService("UserInputService")
+local RunService = game:GetService("RunService")
+local Players = game:GetService("Players")
+local lp = Players.LocalPlayer
+local Camera = workspace.CurrentCamera
+_G.LockAll = false
+_G.ESPEnabled = false
+_G.AntiFling = false
+_G.AutoGrabGun = false
+_G.AutoFarmCoins = false
+_G.AutoFarmSpeed = 50 
+_G.LoopFlingSelected = false
+_G.TargetFling = "None"
+_G.TargetTeleport = "None"
+_G.HiddenFling = false
+_G.Noclip = false
+_G.WalkSpeedValue = 16
+_G.JumpPowerValue = 50
+_G.FlingDuration = 1.5
+_G.ShakeEnabled = true
+_G.ShakeSensitivity = 5
+_G.HideKey = "Insert"
+local Flinging = false
+local LobbyCenter = Vector3.new(14.343082, 511.367554, -26.675339)
+local espHighlights = {}
+local ScreenGui_1 = Instance.new("ScreenGui", game.CoreGui)
+ScreenGui_1.Name = "BeaconProFloatingUI"
+ScreenGui_1.ResetOnSpawn = false
+ScreenGui_1.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
+local GrabGun_2 = Instance.new("Frame", ScreenGui_1)
+GrabGun_2.BorderSizePixel = 0
+GrabGun_2.BackgroundColor3 = Color3.fromRGB(149, 0, 0)
+GrabGun_2.Size = UDim2.new(0, 92, 0, 110)
+GrabGun_2.Position = UDim2.new(0, 676, 0, -36)
+GrabGun_2.Name = "GrabGun"
+GrabGun_2.BackgroundTransparency = 0.7
+GrabGun_2.Visible = false
+local UICorner_3 = Instance.new("UICorner", GrabGun_2)
+local UIStroke_4 = Instance.new("UIStroke", GrabGun_2)
+UIStroke_4.Color = Color3.fromRGB(255, 255, 255)
+local SpinIconImage_5 = Instance.new("ImageLabel", GrabGun_2)
+SpinIconImage_5.BorderSizePixel = 0
+SpinIconImage_5.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+SpinIconImage_5.Image = "rbxassetid://84918996464030"
+SpinIconImage_5.Size = UDim2.new(0, 76, 0, 76)
+SpinIconImage_5.BackgroundTransparency = 1
+SpinIconImage_5.Name = "SpinIconImage"
+SpinIconImage_5.Position = UDim2.new(0, 8, 0, 8)
+local ActionName_7 = Instance.new("TextLabel", GrabGun_2)
+ActionName_7.BorderSizePixel = 0
+ActionName_7.TextSize = 10
+ActionName_7.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+ActionName_7.TextColor3 = Color3.fromRGB(255, 255, 34)
+ActionName_7.BackgroundTransparency = 1
+ActionName_7.RichText = true
+ActionName_7.Size = UDim2.new(0, 92, 0, 24)
+ActionName_7.Text = "<b>Grab Gun</b>"
+ActionName_7.Name = "ActionName"
+ActionName_7.Position = UDim2.new(0, 0, 0, 86)
+local UIStroke_8 = Instance.new("UIStroke", ActionName_7)
+local ClickDetector_a = Instance.new("TextButton", GrabGun_2)
+ClickDetector_a.BorderSizePixel = 0
+ClickDetector_a.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+ClickDetector_a.ZIndex = 5
+ClickDetector_a.BackgroundTransparency = 1
+ClickDetector_a.Size = UDim2.new(0, 80, 0, 90)
+ClickDetector_a.Text = ""
+ClickDetector_a.Name = "ClickDetector"
+ClickDetector_a.Position = UDim2.new(0, 6, 0, 14)
+local UICorner_b = Instance.new("UICorner", ClickDetector_a)
+local ShootMurder_c = Instance.new("Frame", ScreenGui_1)
+ShootMurder_c.BorderSizePixel = 0
+ShootMurder_c.BackgroundColor3 = Color3.fromRGB(149, 0, 0)
+ShootMurder_c.Size = UDim2.new(0, 92, 0, 110)
+ShootMurder_c.Position = UDim2.new(0, 676, 0, 80)
+ShootMurder_c.Name = "ShootMurder"
+ShootMurder_c.BackgroundTransparency = 0.7
+ShootMurder_c.Visible = false
+local UICorner_d = Instance.new("UICorner", ShootMurder_c)
+local UIStroke_e = Instance.new("UIStroke", ShootMurder_c)
+UIStroke_e.Color = Color3.fromRGB(255, 255, 255)
+local SpinIconImage_f = Instance.new("ImageLabel", ShootMurder_c)
+SpinIconImage_f.BorderSizePixel = 0
+SpinIconImage_f.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+SpinIconImage_f.ImageColor3 = Color3.fromRGB(255, 0, 0)
+SpinIconImage_f.Image = "rbxassetid://97953233410159"
+SpinIconImage_f.Size = UDim2.new(0, 76, 0, 76)
+SpinIconImage_f.BackgroundTransparency = 1
+SpinIconImage_f.Name = "SpinIconImage"
+SpinIconImage_f.Position = UDim2.new(0, 8, 0, 8)
+local ActionName_11 = Instance.new("TextLabel", ShootMurder_c)
+ActionName_11.BorderSizePixel = 0
+ActionName_11.TextSize = 10
+ActionName_11.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+ActionName_11.TextColor3 = Color3.fromRGB(255, 0, 0)
+ActionName_11.BackgroundTransparency = 1
+ActionName_11.RichText = true
+ActionName_11.Size = UDim2.new(0, 92, 0, 24)
+ActionName_11.Text = "<b>Shoot</b>"
+ActionName_11.Name = "ActionName"
+ActionName_11.Position = UDim2.new(0, 0, 0, 86)
+local UIStroke_12 = Instance.new("UIStroke", ActionName_11)
+local ClickDetector_14 = Instance.new("TextButton", ShootMurder_c)
+ClickDetector_14.BorderSizePixel = 0
+ClickDetector_14.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+ClickDetector_14.ZIndex = 5
+ClickDetector_14.BackgroundTransparency = 1
+ClickDetector_14.Size = UDim2.new(0, 80, 0, 90)
+ClickDetector_14.Text = ""
+ClickDetector_14.Name = "ClickDetector"
+ClickDetector_14.Position = UDim2.new(0, 6, 0, 14)
+local UICorner_15 = Instance.new("UICorner", ClickDetector_14)
+local KnifeTrow_16 = Instance.new("Frame", ScreenGui_1)
+KnifeTrow_16.BorderSizePixel = 0
+KnifeTrow_16.BackgroundColor3 = Color3.fromRGB(149, 0, 0)
+KnifeTrow_16.Size = UDim2.new(0, 92, 0, 110)
+KnifeTrow_16.Position = UDim2.new(0, 576, 0, -36)
+KnifeTrow_16.Name = "KnifeThrow"
+KnifeTrow_16.BackgroundTransparency = 0.7
+KnifeTrow_16.Visible = false
+local UICorner_17 = Instance.new("UICorner", KnifeTrow_16)
+local UIStroke_18 = Instance.new("UIStroke", KnifeTrow_16)
+UIStroke_18.Color = Color3.fromRGB(255, 255, 255)
+local SpinIconImage_19 = Instance.new("ImageLabel", KnifeTrow_16)
+SpinIconImage_19.BorderSizePixel = 0
+SpinIconImage_19.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+SpinIconImage_19.ImageColor3 = Color3.fromRGB(255, 33, 228)
+SpinIconImage_19.Image = "rbxassetid://7485051715"
+SpinIconImage_19.Size = UDim2.new(0, 76, 0, 76)
+SpinIconImage_19.BackgroundTransparency = 1
+SpinIconImage_19.Name = "SpinIconImage"
+SpinIconImage_19.Position = UDim2.new(0, 8, 0, 8)
+local ActionName_1b = Instance.new("TextLabel", KnifeTrow_16)
+ActionName_1b.BorderSizePixel = 0
+ActionName_1b.TextSize = 10
+ActionName_1b.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+ActionName_1b.TextColor3 = Color3.fromRGB(255, 59, 222)
+ActionName_1b.BackgroundTransparency = 1
+ActionName_1b.RichText = true
+ActionName_1b.Size = UDim2.new(0, 92, 0, 24)
+ActionName_1b.Text = "<b>Knife Throw</b>"
+ActionName_1b.Name = "ActionName"
+ActionName_1b.Position = UDim2.new(0, 0, 0, 86)
+local UIStroke_1c = Instance.new("UIStroke", ActionName_1b)
+local ClickDetector_1e = Instance.new("TextButton", KnifeTrow_16)
+ClickDetector_1e.BorderSizePixel = 0
+ClickDetector_1e.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+ClickDetector_1e.ZIndex = 5
+ClickDetector_1e.BackgroundTransparency = 1
+ClickDetector_1e.Size = UDim2.new(0, 80, 0, 90)
+ClickDetector_1e.Text = ""
+ClickDetector_1e.Name = "ClickDetector"
+ClickDetector_1e.Position = UDim2.new(0, 6, 0, 14)
+local UICorner_1f = Instance.new("UICorner", ClickDetector_1e)
+local hueColor = 0
+RunService.RenderStepped:Connect(function(dt)
+    SpinIconImage_5.Rotation = (SpinIconImage_5.Rotation + (dt * 120)) % 360
+    SpinIconImage_f.Rotation = (SpinIconImage_f.Rotation + (dt * 120)) % 360
+    SpinIconImage_19.Rotation = (SpinIconImage_19.Rotation + (dt * 120)) % 360
+    hueColor = (hueColor + (dt * 0.15)) % 1
+    local newCol = Color3.fromHSV(hueColor, 1, 1)
+    GrabGun_2.BackgroundColor3 = newCol
+    ShootMurder_c.BackgroundColor3 = newCol
+    KnifeTrow_16.BackgroundColor3 = newCol
+end)
+local uiHidden = false
+local lastShakeTime = 0
+UserInputService.DeviceAccelerationChanged:Connect(function(acceleration)
+    if not _G.ShakeEnabled then return end
+    if acceleration.Position.Magnitude > _G.ShakeSensitivity then
+        local currentTime = os.clock()
+        if currentTime - lastShakeTime > 1.5 then
+            lastShakeTime = currentTime
+            uiHidden = not uiHidden
+            local trans = uiHidden and 1 or 0
+            local bgTrans = uiHidden and 1 or 0.7
+            GrabGun_2.BackgroundTransparency = bgTrans
+            ShootMurder_c.BackgroundTransparency = bgTrans
+            KnifeTrow_16.BackgroundTransparency = bgTrans
+            UIStroke_4.Transparency = trans
+            UIStroke_e.Transparency = trans
+            UIStroke_18.Transparency = trans
+            UIStroke_8.Transparency = trans
+            UIStroke_12.Transparency = trans
+            UIStroke_1c.Transparency = trans
+            SpinIconImage_5.ImageTransparency = trans
+            SpinIconImage_f.ImageTransparency = trans
+            SpinIconImage_19.ImageTransparency = trans
+            ActionName_7.TextTransparency = trans
+            ActionName_11.TextTransparency = trans
+            ActionName_1b.TextTransparency = trans
+            if libraryGui then libraryGui.Enabled = not uiHidden end
+        end
+    end
+end)
+UserInputService.InputBegan:Connect(function(input, gpe)
+    if gpe then return end
+    if input.KeyCode == Enum.KeyCode[_G.HideKey] then
+        uiHidden = not uiHidden
+        local trans = uiHidden and 1 or 0
+        local bgTrans = uiHidden and 1 or 0.7
+        GrabGun_2.BackgroundTransparency = bgTrans
+        ShootMurder_c.BackgroundTransparency = bgTrans
+        KnifeTrow_16.BackgroundTransparency = bgTrans
+        UIStroke_4.Transparency = trans
+        UIStroke_e.Transparency = trans
+        UIStroke_18.Transparency = trans
+        UIStroke_8.Transparency = trans
+        UIStroke_12.Transparency = trans
+        UIStroke_1c.Transparency = trans
+        SpinIconImage_5.ImageTransparency = trans
+        SpinIconImage_f.ImageTransparency = trans
+        SpinIconImage_19.ImageTransparency = trans
+        ActionName_7.TextTransparency = trans
+        ActionName_11.TextTransparency = trans
+        ActionName_1b.TextTransparency = trans
+        if libraryGui then libraryGui.Enabled = not uiHidden end
+    end
+end)
+local function isAlive(p)
+    if not p or not p.Character then return false end
+    local hum = p.Character:FindFirstChild("Humanoid")
+    if not hum or hum.Health <= 0 then return false end
+    return true
+end
+local function getMurderer()
+    for _, v in pairs(Players:GetPlayers()) do
+        if v ~= lp and isAlive(v) then
+            local bp = v:FindFirstChild("Backpack")
+            if (bp and bp:FindFirstChild("Knife")) or v.Character:FindFirstChild("Knife") then return v end
+        end
+    end
+    return nil
+end
+local function getSheriff()
+    for _, v in pairs(Players:GetPlayers()) do
+        if v ~= lp and isAlive(v) then
+            local bp = v:FindFirstChild("Backpack")
+            if (bp and bp:FindFirstChild("Gun")) or v.Character:FindFirstChild("Gun") then return v end
+        end
+    end
+    return nil
+end
+local function amIMurderer()
+    if isAlive(lp) then
+        local bp = lp:FindFirstChild("Backpack")
+        if (bp and bp:FindFirstChild("Knife")) or lp.Character:FindFirstChild("Knife") then return true end
+    end
+    return false
+end
+local function findClosestSpawn()
+    local closest = nil
+    local dist = math.huge
+    local hrp = lp.Character and lp.Character:FindFirstChild("HumanoidRootPart")
+    if not hrp then return nil end
+    for _, v in pairs(workspace:GetDescendants()) do
+        if v:IsA("BasePart") and (v.Name:lower():find("spawn") or v.Name == "Spawn") then
+            local d = (hrp.Position - v.Position).Magnitude
+            if d < dist then dist = d closest = v end
+        end
+    end
+    return closest
+end
+local function teleportToSpawn()
+    local target = nil
+    for _, v in pairs(workspace:GetDescendants()) do
+        if v:IsA("BasePart") and (v.Name:lower():find("spawn") or v.Name == "Spawn") then
+            if (v.Position - LobbyCenter).Magnitude <= 500 then target = v break end
+        end
+    end
+    if target and lp.Character and lp.Character:FindFirstChild("HumanoidRootPart") then
+        lp.Character.HumanoidRootPart.CFrame = target.CFrame + Vector3.new(0, 5, 0)
+    end
+end
+local function teleportToMap()
+    local target = nil
+    for _, v in pairs(workspace:GetDescendants()) do
+        if v:IsA("BasePart") and (v.Name:lower():find("spawn") or v.Name == "Spawn") then
+            if (v.Position - LobbyCenter).Magnitude > 500 then target = v break end
+        end
+    end
+    if target and lp.Character and lp.Character:FindFirstChild("HumanoidRootPart") then
+        lp.Character.HumanoidRootPart.CFrame = target.CFrame + Vector3.new(0, 5, 0)
+    end
+end
+local function applyPlayerStats()
+    local hum = lp.Character and lp.Character:FindFirstChild("Humanoid")
+    if hum then hum.WalkSpeed = _G.WalkSpeedValue hum.JumpPower = _G.JumpPowerValue hum.UseJumpPower = true end
+end
+lp.CharacterAdded:Connect(function(char)
+    local hum = char:WaitForChild("Humanoid", 10)
+    if hum then
+        local t = 0
+        local c; c = RunService.Heartbeat:Connect(function(dt)
+            t = t + dt
+            if t >= 0.5 then c:Disconnect() applyPlayerStats() end
+        end)
+    end
+end)
+local function getDroppedGun()
+    for _, v in pairs(workspace:GetDescendants()) do
+        if v:IsA("BasePart") and v.Name == "GunDrop" then return v end
+    end
+    return nil
+end
+local function updateESP()
+    if not _G.ESPEnabled then
+        for i, h in pairs(espHighlights) do if h then h:Destroy() end end
+        espHighlights = {}
+        return
+    end
+    for _, p in pairs(Players:GetPlayers()) do
+        if p ~= lp then
+            if p.Character and isAlive(p) then
+                if not espHighlights[p] or not espHighlights[p].Parent then
+                    local h = Instance.new("Highlight")
+                    h.FillTransparency = 0.5
+                    h.OutlineTransparency = 0
+                    h.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
+                    h.Parent = p.Character
+                    espHighlights[p] = h
+                end
+                local h = espHighlights[p]
+                h.Parent = p.Character
+                local bp = p:FindFirstChild("Backpack")
+                local isM = (bp and bp:FindFirstChild("Knife")) or p.Character:FindFirstChild("Knife")
+                local isS = (bp and bp:FindFirstChild("Gun")) or p.Character:FindFirstChild("Gun")
+                if isM then h.FillColor = Color3.fromRGB(255, 0, 0)
+                elseif isS then h.FillColor = Color3.fromRGB(0, 0, 255)
+                else h.FillColor = Color3.fromRGB(0, 255, 0) end
+            else
+                if espHighlights[p] then espHighlights[p]:Destroy() espHighlights[p] = nil end
+            end
+        end
+    end
+    local gunDrop = getDroppedGun()
+    if gunDrop then
+        if not espHighlights["GunDrop"] or not espHighlights["GunDrop"].Parent then
+            local h = Instance.new("Highlight")
+            h.FillColor = Color3.fromRGB(255, 255, 0)
+            h.FillTransparency = 0.2
+            h.OutlineColor = Color3.fromRGB(255, 255, 255)
+            h.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
+            h.Parent = gunDrop
+            espHighlights["GunDrop"] = h
+        end
+        espHighlights["GunDrop"].Parent = gunDrop
+    else
+        if espHighlights["GunDrop"] then espHighlights["GunDrop"]:Destroy() espHighlights["GunDrop"] = nil end
+    end
+end
+local cachedCoins = {}
+local lastCoinUpdate = 0
+local function refreshCoins()
+    cachedCoins = {}
+    local container = workspace:FindFirstChild("Normal") and workspace.Normal:FindFirstChild("CoinContainer")
+    if container then
+        for _, v in pairs(container:GetChildren()) do
+            table.insert(cachedCoins, v)
+        end
+    else
+        for _, v in pairs(workspace:GetDescendants()) do
+            if v:IsA("BasePart") and v:FindFirstChildWhichIsA("TouchTransmitter") then
+                if v.Name:lower():match("coin") or (v.Parent and v.Parent.Name:lower():match("coin")) then
+                    table.insert(cachedCoins, v)
+                end
+            end
+        end
+    end
+end
+local function getClosestCoinPart()
+    if os.clock() - lastCoinUpdate > 1 then
+        refreshCoins()
+        lastCoinUpdate = os.clock()
+    end
+    local hrp = lp.Character and lp.Character:FindFirstChild("HumanoidRootPart")
+    if not hrp then return nil end
+    local closest = nil
+    local dist = math.huge
+    for _, coin in pairs(cachedCoins) do
+        if coin and coin.Parent then
+            local targetPart = coin:IsA("BasePart") and coin or coin:FindFirstChildWhichIsA("BasePart")
+            if targetPart then
+                local d = (hrp.Position - targetPart.Position).Magnitude
+                if d < dist then
+                    dist = d
+                    closest = targetPart
+                end
+            end
+        end
+    end
+    return closest
+end
+RunService.RenderStepped:Connect(function()
+    updateESP()
+    if lp.Character and lp.Character:FindFirstChild("HumanoidRootPart") then
+        local hrp = lp.Character.HumanoidRootPart
+        if hrp.Position.Y < -40 and not _G.AutoFarmCoins and not _G.LoopFlingSelected then
+            hrp.Velocity = Vector3.new(0, 0, 0)
+            local spawnPart = findClosestSpawn()
+            hrp.CFrame = spawnPart and (spawnPart.CFrame + Vector3.new(0, 5, 0)) or CFrame.new(0, 100, 0)
+        end
+        if _G.Noclip or _G.HiddenFling or _G.AutoFarmCoins or _G.LoopFlingSelected then
+            for _, v in pairs(lp.Character:GetDescendants()) do
+                if v:IsA("BasePart") then v.CanCollide = false end
+            end
+        end
+    end
+end)
+local function startFlingAction(targetPlayer)
+    if Flinging or _G.LoopFlingSelected or not targetPlayer or not isAlive(targetPlayer) then return end
+    local hrp = lp.Character and lp.Character:FindFirstChild("HumanoidRootPart")
+    if not hrp then return end
+    Flinging = true
+    _G.HiddenFling = true
+    local originalCF = hrp.CFrame
+    local flingTime = 0
+    local flingConn
+    flingConn = RunService.Heartbeat:Connect(function(dt)
+        flingTime = flingTime + dt
+        if flingTime >= _G.FlingDuration or not isAlive(targetPlayer) or not targetPlayer.Character:FindFirstChild("HumanoidRootPart") then
+            _G.HiddenFling = false
+            flingConn:Disconnect()
+            if hrp and hrp.Parent then
+                hrp.Velocity = Vector3.new(0, 0, 0)
+                hrp.RotVelocity = Vector3.new(0, 0, 0)
+                hrp.Anchored = true
+                local resetTime = 0
+                local resetConn
+                resetConn = RunService.Heartbeat:Connect(function(dt2)
+                    resetTime = resetTime + dt2
+                    if resetTime >= 0.5 then
+                        resetConn:Disconnect()
+                        if originalCF.Y < -30 then
+                            local s = findClosestSpawn()
+                            hrp.CFrame = s and (s.CFrame + Vector3.new(0, 5, 0)) or CFrame.new(0, 50, 0)
+                        else hrp.CFrame = originalCF end
+                        hrp.Anchored = false
+                        Flinging = false
+                    end
+                end)
+            end
+            return
+        end
+        local tHRP = targetPlayer.Character.HumanoidRootPart
+        local tHum = targetPlayer.Character:FindFirstChild("Humanoid")
+        local movePredict = (tHum and tHum.MoveDirection * 2) or Vector3.new(0,0,0)
+        if hrp and hrp.Parent then
+            hrp.Velocity = Vector3.new(1000000, 1000000, 1000000)
+            hrp.RotVelocity = Vector3.new(0, 1000000, 0)
+            hrp.CFrame = tHRP.CFrame * CFrame.new(movePredict.X, 0, movePredict.Z) * CFrame.Angles(math.random(-360, 360), math.random(-360, 360), math.random(-360, 360))
+        end
+    end)
+end
+local function fireGun()
+    if not isAlive(lp) or not lp.Character:FindFirstChild("HumanoidRootPart") then return end
+    local gun = lp.Character:FindFirstChild("Gun") or lp:FindFirstChild("Backpack"):FindFirstChild("Gun")
+    local m = getMurderer()
+    if gun and m and isAlive(m) and m.Character:FindFirstChild("HumanoidRootPart") then
+        local function doShoot()
+            local mHRP = m.Character.HumanoidRootPart
+            local targetPos = mHRP.Position + (mHRP.Velocity * 0.25)
+            local args = {[1] = CFrame.new(mHRP.Position + Vector3.new(0,0,1), targetPos) * CFrame.Angles(1.453, 0.044, 1.65), [2] = CFrame.new(targetPos)}
+            if gun:FindFirstChild("Shoot") then gun.Shoot:FireServer(unpack(args)) end
+        end
+        if gun.Parent == lp:FindFirstChild("Backpack") then
+            lp.Character.Humanoid:EquipTool(gun)
+            local t = 0
+            local c; c = RunService.Heartbeat:Connect(function(dt)
+                t = t + dt
+                if t >= 0.1 then c:Disconnect() doShoot() end
+            end)
+        else doShoot() end
+    end
+end
+local function throwAction()
+    if not isAlive(lp) or not lp.Character:FindFirstChild("HumanoidRootPart") then return end
+    local knife = lp.Character:FindFirstChild("Knife") or lp:FindFirstChild("Backpack"):FindFirstChild("Knife")
+    local near, dist = nil, math.huge
+    for _, v in pairs(Players:GetPlayers()) do
+        if v ~= lp and isAlive(v) and v.Character:FindFirstChild("HumanoidRootPart") then
+            local d = (lp.Character.HumanoidRootPart.Position - v.Character.HumanoidRootPart.Position).Magnitude
+            if d < dist then dist = d near = v end
+        end
+    end
+    if knife and near and isAlive(near) and near.Character:FindFirstChild("HumanoidRootPart") then
+        if knife.Parent == lp:FindFirstChild("Backpack") then lp.Character.Humanoid:EquipTool(knife) end
+        local targetHRP = near.Character.HumanoidRootPart
+        local args = {[1] = CFrame.new(targetHRP.Position + Vector3.new(0,0,3), targetHRP.Position) * CFrame.Angles(1.45, 0.04, 1.65), [2] = CFrame.new(targetHRP.Position)}
+        if knife:FindFirstChild("Events") and knife.Events:FindFirstChild("KnifeThrown") then knife.Events.KnifeThrown:FireServer(unpack(args)) end
+    end
+end
+local function grabGunAction()
+    local gunObj = getDroppedGun()
+    if gunObj and isAlive(lp) and lp.Character:FindFirstChild("HumanoidRootPart") then
+        local hrp = lp.Character.HumanoidRootPart
+        if typeof(firetouchinterest) == "function" then
+            if gunObj:IsA("BasePart") then
+                firetouchinterest(hrp, gunObj, 0)
+                local c; c = RunService.Heartbeat:Connect(function() firetouchinterest(hrp, gunObj, 1) c:Disconnect() end)
+            else
+                for _, v in pairs(gunObj:GetDescendants()) do
+                    if v:IsA("BasePart") then
+                        firetouchinterest(hrp, v, 0)
+                        local c; c = RunService.Heartbeat:Connect(function() firetouchinterest(hrp, v, 1) c:Disconnect() end)
+                    end
+                end
+            end
+        end
+    end
+end
+UserInputService.InputBegan:Connect(function(input, gameProcessed)
+    if gameProcessed then return end
+    if input.KeyCode == Enum.KeyCode.F1 then local m = getMurderer() if m then startFlingAction(m) end
+    elseif input.KeyCode == Enum.KeyCode.F2 then local s = getSheriff() if s then startFlingAction(s) end
+    elseif input.KeyCode == Enum.KeyCode.Y then fireGun()
+    elseif input.KeyCode == Enum.KeyCode.R then throwAction()
+    elseif input.KeyCode == Enum.KeyCode.L then grabGunAction() end
+end)
+local autoGrabTimer = 0
+RunService.Heartbeat:Connect(function(dt)
+    autoGrabTimer = autoGrabTimer + dt
+    if autoGrabTimer >= 0.25 then
+        autoGrabTimer = 0
+        if _G.AutoGrabGun and not amIMurderer() and isAlive(lp) then grabGunAction() end
+    end
+    if _G.AutoFarmCoins and isAlive(lp) and not _G.LoopFlingSelected and not Flinging then
+        local hrp = lp.Character.HumanoidRootPart
+        local coin = getClosestCoinPart()
+        if coin then
+            local dist = (coin.Position - hrp.Position).Magnitude
+            local moveAmount = _G.AutoFarmSpeed * dt
+            hrp.Velocity = Vector3.new(0, 0, 0)
+            if dist > moveAmount then
+                hrp.CFrame = CFrame.new(hrp.Position, coin.Position) * CFrame.new(0, 0, -moveAmount)
+            else
+                hrp.CFrame = coin.CFrame
+                if typeof(firetouchinterest) == "function" then
+                    firetouchinterest(hrp, coin, 0)
+                    firetouchinterest(hrp, coin, 1)
+                end
+            end
+        end
+    end
+    if _G.LoopFlingSelected and _G.TargetFling ~= "None" and not Flinging then
+        local target = Players:FindFirstChild(_G.TargetFling)
+        if target and isAlive(target) and isAlive(lp) then
+            local tHRP = target.Character:FindFirstChild("HumanoidRootPart")
+            local hrp = lp.Character:FindFirstChild("HumanoidRootPart")
+            if tHRP and hrp then
+                local params = RaycastParams.new()
+                params.FilterType = Enum.RaycastFilterType.Exclude
+                params.FilterDescendantsInstances = {target.Character, lp.Character}
+                local hit = workspace:Raycast(tHRP.Position, Vector3.new(0, -55, 0), params)
+                if hit then
+                    local tHum = target.Character:FindFirstChild("Humanoid")
+                    local movePredict = (tHum and tHum.MoveDirection * 2) or Vector3.new(0,0,0)
+                    hrp.Velocity = Vector3.new(1000000, 1000000, 1000000)
+                    hrp.RotVelocity = Vector3.new(0, 1000000, 0)
+                    hrp.CFrame = tHRP.CFrame * CFrame.new(movePredict.X, 0, movePredict.Z) * CFrame.Angles(math.random(-360, 360), math.random(-360, 360), math.random(-360, 360))
+                else
+                    hrp.Velocity = Vector3.new(0,0,0)
+                    hrp.RotVelocity = Vector3.new(0,0,0)
+                end
+            end
+        end
+    end
+end)
+RunService.Stepped:Connect(function()
+    if lp.Character and (_G.AntiFling or _G.HiddenFling or _G.LoopFlingSelected) then
+        for _, p in pairs(Players:GetPlayers()) do
+            if p ~= lp and p.Character then
+                for _, part in pairs(p.Character:GetDescendants()) do if part:IsA("BasePart") then part.CanCollide = false end end
+            end
+        end
+    end
+end)
+local function makeDraggable(frame, button, customAction)
+    local dragging, dragStart, startPos
+    button.InputBegan:Connect(function(input)
+        if (input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch) then
+            if customAction then customAction() end
+            if not _G.LockAll then dragging = true dragStart = input.Position startPos = frame.Position end
+        end
+    end)
+    UserInputService.InputChanged:Connect(function(input)
+        if dragging and (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) then
+            local delta = input.Position - dragStart
+            frame.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+        end
+    end)
+    UserInputService.InputEnded:Connect(function(input)
+        if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then dragging = false end
+    end)
+end
+makeDraggable(ShootMurder_c, ClickDetector_14, fireGun)
+makeDraggable(KnifeTrow_16, ClickDetector_1e, throwAction)
+makeDraggable(GrabGun_2, ClickDetector_a, grabGunAction)
+local myUI = Library:CreateWindow({Title = "BeaconProV2", Icon = "rbxassetid://7419516279"})
+local tabMain = myUI:CreateTab("Main")
+local tabAuto = myUI:CreateTab("Auto")
+local tabFling = myUI:CreateTab("Fling")
+local tabTeleport = myUI:CreateTab("Teleport")
+local tabPlayer = myUI:CreateTab("Player")
+local tabConfig = myUI:CreateTab("Config")
+tabMain:CreateToggle("ESP", "Enable ESP", false, function(v) _G.ESPEnabled = v end)
+tabMain:CreateToggle("Lock", "Lock Floating Buttons", false, function(v) _G.LockAll = v end)
+tabMain:CreateToggle("GunBtn", "Show Gun Button(L)", false, function(v) GrabGun_2.Visible = v end)
+tabMain:CreateToggle("ShootBtn", "Show Shoot Button(y)", false, function(v) ShootMurder_c.Visible = v end)
+tabMain:CreateToggle("ThrowBtn", "Show Throw Button(r)", false, function(v) KnifeTrow_16.Visible = v end)
+tabAuto:CreateToggle("AutoGrab", "Auto Grab Gun", false, function(v) _G.AutoGrabGun = v end)
+tabAuto:CreateToggle("AutoFarmCoins", "Auto Farm Coins", false, function(v) _G.AutoFarmCoins = v end)
+tabAuto:CreateTextbox("AutoFarmSpeed", "Speed (Studs/s)", "50", function(val) _G.AutoFarmSpeed = tonumber(val) or 50 end)
+tabFling:CreateToggle("AntiFling", "Enable Anti Fling", false, function(v) _G.AntiFling = v end)
+local function getPlayerNames()
+    local t = {} for _, v in pairs(Players:GetPlayers()) do table.insert(t, v.Name) end return t
+end
+tabFling:CreateDropdown("TargetPlayer", "Select Target", getPlayerNames(), false, function(s) _G.TargetFling = s end)
+tabFling:CreateToggle("LoopFling", "Loop Fling Selected", false, function(v) _G.LoopFlingSelected = v end)
+tabFling:CreateButton("FlingSheriff", "Fling Sheriff(F2)", function() local s = getSheriff() if s then startFlingAction(s) end end)
+tabFling:CreateButton("FlingMurder", "Fling Murderer(F1)", function() local m = getMurderer() if m then startFlingAction(m) end end)
+tabFling:CreateButton("FlingSelected", "Fling Selected", function() local t = Players:FindFirstChild(_G.TargetFling) if t then startFlingAction(t) end end)
+tabTeleport:CreateButton("TpSpawn", "Teleport to Spawn", function() teleportToSpawn() end)
+tabTeleport:CreateButton("TpMap", "Teleport to Map", function() teleportToMap() end)
+tabTeleport:CreateDropdown("TpTargetPlayer", "Select Player", getPlayerNames(), false, function(s) _G.TargetTeleport = s end)
+tabTeleport:CreateButton("TpToPlayer", "Teleport to Player", function()
+    local t = Players:FindFirstChild(_G.TargetTeleport)
+    if t and t.Character and t.Character:FindFirstChild("HumanoidRootPart") then lp.Character.HumanoidRootPart.CFrame = t.Character.HumanoidRootPart.CFrame end
+end)
+tabPlayer:CreateToggle("Noclip", "Enable Noclip", false, function(v) _G.Noclip = v end)
+tabPlayer:CreateTextbox("Speed", "WalkSpeed", "16", function(val) _G.WalkSpeedValue = tonumber(val) or 16 applyPlayerStats() end)
+tabPlayer:CreateTextbox("Jump", "JumpPower", "50", function(val) _G.JumpPowerValue = tonumber(val) or 50 applyPlayerStats() end)
+tabConfig:CreateTextbox("FlingDur", "Fling Duration", "1.5", function(v) _G.FlingDuration = tonumber(v) or 1.5 end)
+tabConfig:CreateToggle("ShakeToggle", "Enable Shake to Hide", true, function(v) _G.ShakeEnabled = v end)
+tabConfig:CreateTextbox("ShakeSens", "Shake Sensitivity", "5", function(v) _G.ShakeSensitivity = tonumber(v) or 5 end)
+tabConfig:CreateDropdown("Keybind", "Hide Key (PC)", {"Insert", "Delete", "RightControl", "LeftAlt", "End"}, false, function(s) _G.HideKey = s end)
+Players.PlayerAdded:Connect(function() local names = getPlayerNames() myUI:SetElement("TargetPlayer", {Options = names}) myUI:SetElement("TpTargetPlayer", {Options = names}) end)
+Players.PlayerRemoving:Connect(function() local names = getPlayerNames() myUI:SetElement("TargetPlayer", {Options = names}) myUI:SetElement("TpTargetPlayer", {Options = names}) end)
